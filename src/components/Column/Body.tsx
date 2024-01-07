@@ -3,7 +3,7 @@ import { SortableContext } from "@dnd-kit/sortable";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { css } from "../../../styled-system/css";
 
-import Task from "./components/Task"
+import Task from "./components/Task";
 
 import { useTasksStore } from "../../store";
 
@@ -28,9 +28,7 @@ export default function ColumnBody({ columnId }: Props) {
       <div className={styles.rootWrapper} ref={parent}>
         <SortableContext items={items}>
           {tasksByColumn.map((task) => (
-            <Task.Wrapper key={task.id} task={task}>
-              <div>{task.heading}</div>
-            </Task.Wrapper>
+            <Task key={task.id} task={task} />
           ))}
         </SortableContext>
       </div>

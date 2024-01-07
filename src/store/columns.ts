@@ -8,6 +8,7 @@ export type Column = { id: string; heading: string };
 
 type State = {
   columns: Array<Column>;
+  selectedColumn: Column | null;
 };
 
 type Actions = {
@@ -15,12 +16,15 @@ type Actions = {
   removeColumn: (columnId: string) => void;
   updateColumn: (columnId: string, heading: string) => void;
   reorderColumns: (from: number, to: number) => void;
+  selectColumn: (column: Column) => void;
+  resetSelectedColumn: () => void;
 };
 
 export const useColumnsStore = create<State & Actions>()(
   immer((set) => ({
     // state
     columns: [],
+    selectedColumn: null,
     // actions
     addColumn: () =>
       set((state) => {
@@ -44,6 +48,14 @@ export const useColumnsStore = create<State & Actions>()(
     reorderColumns: (from, to) =>
       set((state) => {
         state.columns = arrayMove(state.columns, from, to);
+      }),
+    selectColumn: (column) =>
+      set((state) => {
+        state.selectedColumn = column;
+      }),
+    resetSelectedColumn: () =>
+      set((state) => {
+        state.selectedColumn = null;
       }),
   }))
 );

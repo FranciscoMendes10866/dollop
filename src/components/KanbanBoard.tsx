@@ -1,15 +1,23 @@
+import { createPortal } from "react-dom";
 import { useShallow } from "zustand/react/shallow";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
+import { DragOverlay } from "@dnd-kit/core";
 import { css } from "../../styled-system/css";
 
 import DragAndDrop from "./DragAndDrop";
 import Column from "./Column";
+import Task from "./Column/components/Task";
 
-import { useColumnsStore } from "../store";
+import { useColumnsStore, useTasksStore } from "../store";
 
 export default function KanbanBoard() {
-  const columns = useColumnsStore(useShallow((state) => state.columns));
   const [parent] = useAutoAnimate();
+  const [columns, selectedColumn] = useColumnsStore(
+    useShallow((state) => [state.columns, state.selectedColumn])
+  );
+  const [selectedTask] = useTasksStore(
+    useShallow((state) => [state.selectedTask])
+  );
 
   return (
     <DragAndDrop>
@@ -25,6 +33,26 @@ export default function KanbanBoard() {
           />
         ))}
       </div>
+      {createPortal(
+        <DragOverlay>
+          {selectedColumn ? (
+            <Column.Wrapper
+              key={selectedColumn.id}
+              column={selectedColumn}
+              header={
+                <Column.Header
+                  columnId={selectedColumn.id}
+                  heading={selectedColumn.heading}
+                />
+              }
+              body={<Column.Body columnId={selectedColumn.id} />}
+            />
+          ) : selectedTask ? (
+            <Task task={selectedTask} />
+          ) : null}
+        </DragOverlay>,
+        document.body
+      )}
     </DragAndDrop>
   );
 }
@@ -35,6 +63,7 @@ const styles = {
     margin: "auto",
     display: "flex",
     flexDirection: "row",
+    color: "white",
   }),
   addColumnAction: css({
     height: 60,
