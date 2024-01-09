@@ -1,6 +1,5 @@
 import { createPortal } from "react-dom";
 import { useShallow } from "zustand/react/shallow";
-import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { DragOverlay } from "@dnd-kit/core";
 import { css } from "../../styled-system/css";
 
@@ -11,7 +10,6 @@ import Task from "./Column/components/Task";
 import { useColumnsStore, useTasksStore } from "../store";
 
 export default function KanbanBoard() {
-  const [parent] = useAutoAnimate();
   const [columns, selectedColumn] = useColumnsStore(
     useShallow((state) => [state.columns, state.selectedColumn])
   );
@@ -21,7 +19,7 @@ export default function KanbanBoard() {
 
   return (
     <DragAndDrop>
-      <div className={styles.contentWrapper} ref={parent}>
+      <div className={styles.contentWrapper}>
         {columns.map((column) => (
           <Column.Wrapper
             key={column.id}

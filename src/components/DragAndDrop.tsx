@@ -16,8 +16,13 @@ import { DND_TYPE } from "../constants";
 export default function DragAndDrop(props: PropsWithChildren) {
   const { columns, reorderColumns, resetSelectedColumn, selectColumn } =
     useColumnsStore();
-  const { tasks, reorderTasks, selectTask, resetSelectedTask } =
-    useTasksStore();
+  const {
+    tasks,
+    reorderTasks,
+    selectTask,
+    resetSelectedTask,
+    patchTaskColumn,
+  } = useTasksStore();
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -75,14 +80,23 @@ export default function DragAndDrop(props: PropsWithChildren) {
       const isOverATask = over.data.current?.type === DND_TYPE.TASK;
       if (!isActiveATask) return;
 
+      // dropping a task over another Task
       if (isActiveATask && isOverATask) {
-        const activeIndex = tasks.findIndex(({ id }) => id === activeId);
-        const overIndex = tasks.findIndex(({ id }) => id === overId);
-        reorderTasks(activeIndex, overIndex);
+        reorderTasks(
+          tasks.findIndex(({ id }) => id === activeId),
+          tasks.findIndex(({ id }) => id === overId)
+        );
+        return;
+      }
+
+      // dropping a task over a column
+      const isOverAColumn = over.data.current?.type === DND_TYPE.COLUMN;
+      if (isActiveATask && isOverAColumn) {
+        patchTaskColumn(activeId as string, overId as string);
         return;
       }
     },
-    [reorderTasks, tasks]
+    [patchTaskColumn, reorderTasks, tasks]
   );
 
   const items = useMemo(() => columns.map((column) => column.id), [columns]);

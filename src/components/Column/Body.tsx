@@ -1,6 +1,5 @@
 import { Fragment, useMemo } from "react";
 import { SortableContext } from "@dnd-kit/sortable";
-import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { css } from "../../../styled-system/css";
 
 import Task from "./components/Task";
@@ -13,7 +12,6 @@ type Props = {
 
 export default function ColumnBody({ columnId }: Props) {
   const { tasks, addTask } = useTasksStore();
-  const [parent] = useAutoAnimate();
 
   const { tasksByColumn, items } = useMemo(() => {
     const tasksByColumn = tasks.filter((task) => task.columnId === columnId);
@@ -25,7 +23,7 @@ export default function ColumnBody({ columnId }: Props) {
 
   return (
     <Fragment>
-      <div className={styles.rootWrapper} ref={parent}>
+      <div className={styles.rootWrapper}>
         <SortableContext items={items}>
           {tasksByColumn.map((task) => (
             <Task key={task.id} task={task} />

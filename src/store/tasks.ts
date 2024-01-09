@@ -18,6 +18,7 @@ type Actions = {
   reorderTasks: (from: number, to: number) => void;
   selectTask: (task: Task) => void;
   resetSelectedTask: () => void;
+  patchTaskColumn: (taskId: string, columnId: string) => void;
 };
 
 export const useTasksStore = create<State & Actions>()(
@@ -53,6 +54,13 @@ export const useTasksStore = create<State & Actions>()(
     resetSelectedTask: () =>
       set((state) => {
         state.selectedTask = null;
+      }),
+    patchTaskColumn: (taskId, columnId) =>
+      set((state) => {
+        const tasks = state.tasks;
+        const taskIdx = tasks.findIndex((task) => task.id === taskId);
+        if (taskIdx === -1) return;
+        tasks[taskIdx].columnId = columnId;
       }),
   }))
 );
